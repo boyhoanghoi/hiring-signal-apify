@@ -1,0 +1,10 @@
+{
+  "boards": ["greenhouse:stripe", "lever:leverdemo", "ashby:ashby"],
+  "maxJobs": 20,
+  "maxJobsPerBoard": 8,
+  "includeTitleKeywords": [],
+  "excludeTitleKeywords": [],
+  "locationKeywords": [],
+  "remoteOnly": false,
+  "knownJobIds": []
+}

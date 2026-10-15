@@ -1,0 +1,48 @@
+{
+  "actorSpecification": 1,
+  "title": "One normalized, filtered public job per row",
+  "description": "Only saved jobs appear here. Failures, filtering, empty feeds and incomplete coverage are in diagnostics. Company is a board slug, not a guessed legal company name.",
+  "fields": {
+    "type": "object",
+    "properties": {
+      "id": {"type": "string", "title": "Source job ID"},
+      "jobKey": {"type": "string", "title": "Stable repeat-run key", "description": "provider:board:sourceId; use in knownJobIds to skip already-saved jobs."},
+      "source": {"type": "string", "title": "ATS provider"},
+      "board": {"type": "string", "title": "Employer board slug"},
+      "boardKey": {"type": "string", "title": "Provider and board"},
+      "company": {"type": "string", "title": "Company board slug", "description": "The supplied employer board slug; not a guessed display name."},
+      "companySource": {"type": "string", "title": "Company identity source"},
+      "title": {"type": "string", "title": "Published job title"},
+      "locations": {"type": "array", "title": "Published locations", "items": {"type": "string"}},
+      "department": {"type": "string", "title": "Department"},
+      "team": {"type": "string", "title": "Team"},
+      "workplaceType": {"type": "string", "enum": ["remote", "hybrid", "onsite", "unknown"], "title": "Explicit workplace type"},
+      "workplaceTypeSource": {"type": ["string", "null"], "title": "Workplace source JSON field"},
+      "employmentType": {"type": "string", "title": "Employment type as published"},
+      "descriptionText": {"type": "string", "title": "Plain-text job description", "description": "HTML removed, at most 12,000 characters."},
+      "descriptionTruncated": {"type": "boolean", "title": "Description shortened"},
+      "jobUrl": {"type": "string", "title": "Public job URL"},
+      "applyUrl": {"type": ["string", "null"], "title": "Published application URL"},
+      "publishedAt": {"type": ["string", "null"], "title": "Source publication date", "description": "Unknown stays null. Greenhouse updated_at is never mapped here."},
+      "publishedAtMeaning": {"type": ["string", "null"], "title": "Publication date meaning", "description": "Ashby: last-published. Greenhouse first_published if present: first-published."},
+      "updatedAt": {"type": ["string", "null"], "title": "Source modification date"},
+      "salary": {"type": ["object", "null"], "title": "Published compensation", "description": "Only exposed source compensation; no salary estimates or currency conversion."},
+      "fieldSources": {"type": "object", "title": "Source JSON field paths"},
+      "requestUrl": {"type": "string", "title": "Official source API URL"},
+      "observedAt": {"type": "string", "title": "Observation timestamp in UTC"}
+    },
+    "required": ["id", "jobKey", "source", "board", "title", "jobUrl", "requestUrl", "observedAt"]
+  },
+  "views": {
+    "jobs": {
+      "title": "Jobs",
+      "transformation": {"fields": ["title", "company", "source", "locations", "workplaceType", "department", "employmentType", "publishedAt", "jobUrl"]},
+      "display": {"component": "table", "properties": {"jobUrl": {"format": "link"}, "locations": {"format": "array"}, "publishedAt": {"format": "date"}}}
+    },
+    "provenance": {
+      "title": "Dates, salary and provenance",
+      "transformation": {"fields": ["jobKey", "publishedAt", "publishedAtMeaning", "updatedAt", "salary", "fieldSources", "requestUrl", "observedAt"]},
+      "display": {"component": "table", "properties": {"requestUrl": {"format": "link"}, "salary": {"format": "object"}, "fieldSources": {"format": "object"}}}
+    }
+  }
+}

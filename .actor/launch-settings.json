@@ -1,0 +1,17 @@
+{
+  "title": "Greenhouse, Lever & Ashby Jobs Scraper | HiringSignal",
+  "description": "Read public employer job feeds with filters for titles, locations and explicit remote roles. Skip known job keys and export jobs with source evidence and board coverage.",
+  "seoDescription": "Collect and filter Greenhouse, Lever and Ashby jobs. Stable job keys, source provenance, JSON/CSV and repeat-run deduplication for job board workflows.",
+  "categories": [
+    "JOBS",
+    "LEAD_GENERATION",
+    "DEVELOPER_TOOLS"
+  ],
+  "seoTitle": "Greenhouse, Lever & Ashby Jobs Scraper | HiringSignal",
+  "defaultRunOptions": {
+    "build": "latest",
+    "timeoutSecs": 300,
+    "memoryMbytes": 512
+  },
+  "actorPermissionLevel": "LIMITED_PERMISSIONS"
+}

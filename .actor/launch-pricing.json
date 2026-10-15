@@ -1,0 +1,19 @@
+{
+  "pricingInfos": [
+    {
+      "pricingModel": "PAY_PER_EVENT",
+      "pricingPerEvent": {
+        "actorChargeEvents": {
+          "job-saved": {
+            "eventTitle": "Matching job saved",
+            "eventDescription": "One unique normalized job saved after filters. Known job keys, duplicates, filtered jobs, invalid jobs, failed requests and empty boards are not charged.",
+            "eventPriceUsd": 0.0015,
+            "isPrimaryEvent": true,
+            "isOneTimeEvent": false
+          }
+        }
+      },
+      "minimalMaxTotalChargeUsd": 0.0015
+    }
+  ]
+}

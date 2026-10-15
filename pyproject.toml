@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hiringsignal-apify"
+version = "0.1.0"
+description = "Public Greenhouse, Lever and Ashby job feed normalization with filtering and coverage diagnostics."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = ["aiohttp>=3.12,<4", "beautifulsoup4>=4.13,<5"]
+
+[project.optional-dependencies]
+actor = ["apify>=3.4,<4"]
+
+[project.scripts]
+hiringsignal = "hiringsignal.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

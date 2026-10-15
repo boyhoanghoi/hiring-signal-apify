@@ -1,0 +1,18 @@
+{
+  "actorSpecification": 1,
+  "name": "greenhouse-lever-ashby-jobs-hiring-signal",
+  "title": "Greenhouse, Lever & Ashby Jobs Scraper | HiringSignal",
+  "description": "Normalize public employer jobs across Greenhouse, Lever and Ashby. Filter titles, locations, remote roles and dates; skip known jobs; export source-backed JSON and CSV with coverage diagnostics.",
+  "version": "0.1",
+  "buildTag": "latest",
+  "dockerfile": "../Dockerfile",
+  "dockerContextDir": "..",
+  "readme": "./README.md",
+  "input": "./input_schema.json",
+  "output": "./output_schema.json",
+  "storages": {"dataset": "./dataset_schema.json"},
+  "defaultMemoryMbytes": 512,
+  "minMemoryMbytes": 256,
+  "maxMemoryMbytes": 1024,
+  "usesStandbyMode": false
+}

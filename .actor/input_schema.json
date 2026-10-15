@@ -1,0 +1,20 @@
+{
+  "title": "Find matching public jobs across employer ATS boards",
+  "description": "Read official public Greenhouse, Lever and Ashby feeds. No login, API key or proxy required. Filters apply before saving and job-saved billing. These are employer boards, not a global job search.",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "boards": {"title": "Employer job boards", "type": "array", "editor": "stringList", "description": "Provider:slug entries or public board URLs, up to 30. Examples greenhouse:stripe, lever:leverdemo, ashby:Ashby. Lever EU uses lever-eu:slug. Ashby capitalization is retained.", "prefill": ["greenhouse:stripe", "lever:leverdemo", "ashby:ashby"]},
+    "maxJobs": {"title": "Maximum saved jobs per run", "type": "integer", "description": "Global cap after normalization, deduplication and filtering. Also bounded by your run spending limit.", "default": 20, "minimum": 1, "maximum": 1000},
+    "maxJobsPerBoard": {"title": "Maximum saved jobs per employer board", "type": "integer", "description": "Per-board saved job cap. Capped boards are marked partial; this is not a full hiring count.", "default": 8, "minimum": 1, "maximum": 1000},
+    "includeTitleKeywords": {"title": "Title contains any of these keywords", "type": "array", "description": "Case-insensitive substring OR matching. Empty means all titles. Up to 30 terms.", "editor": "stringList", "default": []},
+    "excludeTitleKeywords": {"title": "Exclude titles containing any keyword", "type": "array", "description": "Case-insensitive substring exclusions, applied after the inclusion list. Up to 30 terms.", "editor": "stringList", "default": []},
+    "locationKeywords": {"title": "Location contains any keyword", "type": "array", "description": "Case-insensitive OR matching against published location labels. No inferred geography.", "editor": "stringList", "default": []},
+    "remoteOnly": {"title": "Explicitly remote roles only", "type": "boolean", "description": "Requires a provider's explicit remote field. Greenhouse list feeds usually lack this and will be excluded; a remote-looking title is not enough. Hybrid is excluded.", "default": false},
+    "publishedAfter": {"title": "Published on or after (optional)", "type": "string", "editor": "textfield", "description": "ISO date or timestamp, e.g. 2026-01-01. Jobs without a publication date are excluded when set. Greenhouse updated_at is not publication; Lever's public feed generally lacks publication dates. Ashby reports last publication.", "default": ""},
+    "knownJobIds": {"sectionCaption": "Repeat runs", "title": "Previously saved job keys", "type": "array", "editor": "stringList", "description": "Paste KNOWN_JOB_IDS from a previous run. These stable jobKey values are skipped before saving/billing. Up to 10,000; the output retains the newest 10,000 if its rolling union grows larger.", "default": []},
+    "timeoutSeconds": {"sectionCaption": "Request limits", "title": "Per-request timeout in seconds", "type": "integer", "description": "Each request is retried at most once for transient failures.", "default": 20, "minimum": 5, "maximum": 45},
+    "minDelaySeconds": {"title": "Minimum pause between requests to one provider", "type": "number", "description": "Requests are sequential and paced; rate-limit responses use a bounded retry delay. Long server retry requests fail safely.", "default": 0.5, "minimum": 0.25, "maximum": 10}
+  },
+  "required": ["boards"]
+}

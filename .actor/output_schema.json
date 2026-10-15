@@ -1,0 +1,12 @@
+{
+  "actorOutputSchemaVersion": 1,
+  "title": "HiringSignal jobs, coverage and repeat-run keys",
+  "properties": {
+    "jobs": {"type": "string", "title": "Saved matching jobs", "template": "{{links.apiDefaultDatasetUrl}}/items"},
+    "csv": {"type": "string", "title": "Spreadsheet-safe CSV", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/results.csv"},
+    "summary": {"type": "string", "title": "Saved-job signals and run summary", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"},
+    "diagnostics": {"type": "string", "title": "Per-board coverage and failures", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIAGNOSTICS"},
+    "knownJobIds": {"type": "string", "title": "Known job keys for your next run", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/KNOWN_JOB_IDS"},
+    "report": {"type": "string", "title": "Complete JSON report", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/OUTPUT"}
+  }
+}

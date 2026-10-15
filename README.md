@@ -2,6 +2,8 @@
 
 <img src="assets/brand/icon-512.png" width="72" height="72" alt="HiringSignal icon">
 
+[Run on Apify Store](https://apify.com/reliable_quatrain/greenhouse-lever-ashby-jobs-hiring-signal) · [Vietnamese workflow guide](docs/WORKFLOW_COOKBOOK_VI.md) · [Launch verification](docs/LAUNCH_STATUS.md)
+
 Public Greenhouse, Lever and Ashby employer jobs, normalized into one dataset.
 The standalone Python CLI and Apify Actor share the same validation, mappings,
 filters and export code. See the [Store product guide](.actor/README.md) for exact

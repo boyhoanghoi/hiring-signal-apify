@@ -2,5 +2,21 @@
   "actorId": "2VTBeCh22BK3amvDJ",
   "name": "greenhouse-lever-ashby-jobs-hiring-signal",
   "username": "reliable_quatrain",
-  "isPublic": false
+  "isPublic": true,
+  "url": "https://apify.com/reliable_quatrain/greenhouse-lever-ashby-jobs-hiring-signal",
+  "build": {
+    "buildId": "T72cZc6bICBXkA1sD",
+    "finishedAt": "2026-10-15T17:02:15.741Z",
+    "buildNumberInt": 100001,
+    "buildNumber": "0.1.1"
+  },
+  "smokeRunIds": [
+    "6fbnLvEU9xgDEu26A",
+    "r1SzqsTWEOhdCIhpb"
+  ],
+  "sourceCommit": "1f1b7d83b2a031e0398c577178b7601b6e38f739",
+  "unitTestsPassed": 22,
+  "publicHttpStatus": 200,
+  "anonymousPublicApiVerified": true,
+  "billingEvent": "job-saved"
 }

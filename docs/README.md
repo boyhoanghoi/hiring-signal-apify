@@ -43,12 +43,13 @@ Test a small public board input, invalid board input, failed provider response,
 zero matches, known-ID skip and a tiny spending cap. Inspect dataset rows,
 `results.csv`, `SUMMARY`, `DIAGNOSTICS` and `KNOWN_JOB_IDS` before public launch.
 
-## Optional monetization
+## Active monetization
 
-Configure pay-per-event in Apify Console with the exact event key `job-saved`.
-Proposed initial price: **$0.0015 per saved job**. This repository does not activate
-the tariff or claim an existing paying user. Keep synthetic dataset/start fees
-at zero to avoid an undisclosed duplicate charge. Test the published Pricing tab.
+Pay-per-event is active on the public Actor with event key `job-saved` at
+**$0.0015 per saved job ($1.50 per 1,000)**. The configuration was accepted by
+Apify and verified through paid-mode cloud runs. This is not evidence of a
+paying customer. Keep synthetic dataset/start fees at zero to avoid an
+undisclosed duplicate charge. The published Pricing tab is authoritative.
 
 In pay-per-event runs, the Python SDK's `Actor.push_data(row,
 charged_event_name='job-saved')` persists the affordable row before recording the
@@ -60,7 +61,7 @@ Only successfully saved rows enter CSV, JSON and next-run known keys.
 The SDK integration follows the official
 [pay-per-event guide](https://docs.apify.com/sdk/python/docs/concepts/pay-per-event).
 Local simulation may use `ACTOR_TEST_PAY_PER_EVENT=true`; without platform pricing,
-the SDK's simulated event price is $1, not the proposed $0.0015. Never set the test
+the SDK's simulated event price is $1, not the active $0.0015. Never set the test
 flag in a cloud production run. Publication and seller eligibility are platform
 account operations, separate from building this source package.
 

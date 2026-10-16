@@ -1,0 +1,11 @@
+{
+  "companyGroup": "ai",
+  "rolePreset": "data-ai",
+  "maxJobs": 6,
+  "maxJobsPerBoard": 2,
+  "includeTitleKeywords": [],
+  "excludeTitleKeywords": [],
+  "locationKeywords": [],
+  "remoteOnly": false,
+  "knownJobIds": []
+}

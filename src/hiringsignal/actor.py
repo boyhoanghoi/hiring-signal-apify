@@ -4,8 +4,9 @@ import asyncio
 from dataclasses import replace
 
 from .config import RunConfig
-from .output import results_csv, rolling_known_ids
+from .output import newsletter_markdown, results_csv, rolling_known_ids
 from .runner import scrape_boards, saved_signals
+from .catalog import catalog_document, search_context
 
 
 BILLABLE_EVENT = "job-saved"
@@ -65,6 +66,7 @@ async def run_actor() -> None:
         report["knownJobIds"] = known
         summary = report["summary"]
         summary.update({"savedJobs": len(saved), "signals": saved_signals(saved), "countsScope": "saved-results-only",
+            "search": search_context(config),
             "budgetLimitReached": budget_reached, "billingEvent": BILLABLE_EVENT if ppe else None,
             "chargedJobs": manager.get_charged_event_count(BILLABLE_EVENT) if ppe else 0,
             "knownJobIdsTruncated": known_truncated, "closureInferenceSupported": False})
@@ -72,7 +74,9 @@ async def run_actor() -> None:
         await Actor.set_value("SUMMARY", summary)
         await Actor.set_value("DIAGNOSTICS", report["diagnostics"])
         await Actor.set_value("KNOWN_JOB_IDS", known)
+        await Actor.set_value("EMPLOYER_CATALOG", catalog_document())
         await Actor.set_value("results.csv", results_csv(saved), content_type="text/csv; charset=utf-8")
+        await Actor.set_value("newsletter.md", newsletter_markdown(saved, summary), content_type="text/markdown; charset=utf-8")
         await Actor.set_value("OUTPUT", report)
         Actor.status_message = f"Saved {len(saved)} matching jobs. " + ("Spending limit reached." if budget_reached else "See diagnostics for board coverage.")
 

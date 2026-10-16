@@ -4,6 +4,8 @@
   "properties": {
     "jobs": {"type": "string", "title": "Saved matching jobs", "template": "{{links.apiDefaultDatasetUrl}}/items"},
     "csv": {"type": "string", "title": "Spreadsheet-safe CSV", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/results.csv"},
+    "newsletter": {"type": "string", "title": "Newsletter jobs shortlist (Markdown)", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/newsletter.md"},
+    "employerCatalog": {"type": "string", "title": "Curated employers and role preset terms", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/EMPLOYER_CATALOG"},
     "summary": {"type": "string", "title": "Saved-job signals and run summary", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"},
     "diagnostics": {"type": "string", "title": "Per-board coverage and failures", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIAGNOSTICS"},
     "knownJobIds": {"type": "string", "title": "Known job keys for your next run", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/KNOWN_JOB_IDS"},

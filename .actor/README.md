@@ -1,117 +1,173 @@
-# Greenhouse, Lever & Ashby Jobs Scraper | HiringSignal
+# AI & Data Jobs Finder | HiringSignal
 
-Build one clean jobs dataset from public employer boards across three ATS
-providers. Filter before saving, keep source links and JSON-field provenance,
-and pass saved job keys into the next run to avoid paying for repeats.
+![HiringSignal: selected employer feeds to a reviewable jobs shortlist](https://raw.githubusercontent.com/boyhoanghoi/hiring-signal-apify/main/assets/launch/jobs-finder.png)
 
-## Useful workflows
+Turn selected public employer job boards into a shortlist for your AI/Data
+newsletter or niche job board. Choose a curated company group and role preset,
+then download matching jobs as CSV, JSON and a Markdown newsletter draft.
+Greenhouse, Lever and Ashby feeds share one normalized schema with source links.
 
-- Recruitment teams: collect matching roles from an existing employer watchlist.
-- Niche job boards: export titles, locations, descriptions and application links.
-- Research teams: count saved roles by employer, department and explicit workplace
-  type, with coverage flags before drawing conclusions.
-- Automation builders: schedule through Apify and feed `KNOWN_JOB_IDS` into a
-  later run's `knownJobIds` input to collect jobs you have not saved before.
+[Step-by-step first run](https://github.com/boyhoanghoi/hiring-signal-apify/blob/main/docs/FIRST_RUN.md) ·
+[Hướng dẫn tiếng Việt](https://github.com/boyhoanghoi/hiring-signal-apify/blob/main/docs/FIRST_RUN_VI.md)
 
-HiringSignal uses public, official JSON feeds. It needs no ATS API key or proxy.
-It does not search the entire internet, submit applications, find candidates or
-bypass access restrictions. You supply the employer boards.
-
-## Start with a small run
+## Start with six matching jobs
 
 ```json
 {
-  "boards": ["greenhouse:stripe", "lever:leverdemo", "ashby:ashby"],
-  "maxJobs": 20,
-  "maxJobsPerBoard": 8,
-  "includeTitleKeywords": [],
-  "excludeTitleKeywords": [],
-  "locationKeywords": [],
-  "remoteOnly": false,
+  "companyGroup": "ai",
+  "rolePreset": "data-ai",
+  "maxJobs": 6,
+  "maxJobsPerBoard": 2
+}
+```
+
+Run this small input, inspect the jobs and their application requirements, then
+open **Output → Newsletter jobs shortlist (Markdown)** for a draft you can edit. This input saves
+at most six matching jobs and at most two per board; availability changes, so it
+may return fewer or zero. Six saved rows correspond to $0.009 in `job-saved`
+events at the configured price. Check Pricing and the run's platform charges.
+
+The watchlist is a starting point, not a complete AI-company directory, a global
+job search or an endorsement by listed employers. The newsletter contains only
+saved rows in provider order. It is not a newest-first ranking and is not posted
+anywhere automatically.
+
+## Pick your employer watchlist
+
+`companyGroup` accepts `none`, `ai`, `developer-tools`, `fintech` or `all`.
+The built-in catalog associates selected employer display names with public ATS
+board keys. Inspect the current **EMPLOYER_CATALOG** output or run the standalone
+CLI's `hiringsignal catalog` command for the actual roster and preset terms.
+See the [catalog notes](https://github.com/boyhoanghoi/hiring-signal-apify/blob/main/docs/CATALOG.md)
+for scope and verification context.
+
+You can also supply `boards`:
+
+```json
+{
+  "companyGroup": "none",
+  "rolePreset": "engineering",
+  "boards": ["greenhouse:stripe", "ashby:ashby"],
+  "maxJobs": 6,
+  "maxJobsPerBoard": 3,
   "knownJobIds": []
 }
 ```
 
-These public boards are examples, not customers or endorsements; availability
-and posting counts change. The sample saves up to 20 jobs and is deliberately
-partial. Increase the caps only after inspecting results and the Pricing tab.
+When both are supplied, explicit boards run first and the company group's boards
+are added without duplicates. Use `companyGroup: "none"` for only your own
+boards. The combined selection must contain 1–30 unique boards. To try only the
+AI preset, clear any older explicit `boards` input.
 
-Supported inputs include `greenhouse:stripe`, `lever:leverdemo`, `ashby:Ashby`,
-`lever-eu:yourboard`, and HTTPS URLs on `boards.greenhouse.io`,
-`job-boards.greenhouse.io`, `jobs.lever.co`, `jobs.eu.lever.co` and
-`jobs.ashbyhq.com`. Ashby capitalization is preserved. Arbitrary API endpoints,
-custom careers domains and redirects are not accepted.
+Supported board forms include `greenhouse:stripe`, `lever:leverdemo`,
+`lever-eu:yourboard`, `ashby:ashby`, and HTTPS public board URLs on
+`boards.greenhouse.io`, `job-boards.greenhouse.io`, `jobs.lever.co`,
+`jobs.eu.lever.co` and `jobs.ashbyhq.com`. Ashby capitalization is preserved.
+Arbitrary API endpoints, custom careers domains and redirects are not accepted.
 
-## Filters
+HiringSignal reads official public JSON feeds. It needs no ATS API key or proxy.
+It does not submit applications, read private candidate data, bypass access
+restrictions or support LinkedIn, Indeed or social-media scraping.
 
-Title inclusion, title exclusion and location lists use case-insensitive substring
-matching. Terms within a list are OR; different filter lists are combined with
-AND. Exclusion takes priority. Filters apply **before saving and billing**.
+## Refine matching jobs
 
-`remoteOnly` requires an explicit provider remote field, and excludes hybrid and
-unknown jobs. A remote-looking location or title is not enough. Greenhouse's
-list endpoint generally has no explicit workplace field, so its jobs usually do
-not pass this filter.
+`rolePreset` accepts `all`, `data-ai`, `engineering`, `product-design` or
+`sales-marketing`. Presets match case-insensitive title words or phrases from
+the catalog; they are practical title filters, not an AI assessment of the role.
+The `all` preset adds no role restriction.
 
-`publishedAfter` is an inclusive ISO date or timestamp. When it is set, jobs with
-unknown publication dates are excluded. Greenhouse `updated_at` is a modification
-date and is never substituted for publication. Lever public jobs generally lack
-a documented publication date. Ashby `publishedAt` means **last published**, not
-necessarily first posted. The separate `publishedAtMeaning` field explains this.
+Optional `includeTitleKeywords`, `excludeTitleKeywords` and `locationKeywords`
+use case-insensitive substring matching. Terms within each list are OR; different
+filter lists and the role preset combine with AND. Exclusion takes priority.
+All filters apply **before saving and billing**.
 
-## Output
+`remoteOnly` requires an explicit provider remote field, excluding hybrid and
+unknown jobs. A remote-looking title or location is not enough. Greenhouse's
+list feed generally has no explicit workplace field, so its jobs usually do not
+pass this filter. **Remote does not mean eligible to work from every country.**
+Check each source posting's location, work authorization and application terms.
 
-The default dataset has one row per normalized job that passes your filters and
-is actually saved:
+`publishedAfter` is an inclusive ISO date or timestamp. When set, jobs with an
+unknown publication date are excluded. Greenhouse `updated_at` is a modification
+date and never substitutes for publication. Lever public jobs generally lack a
+documented publication date. Ashby `publishedAt` means **last published**, not
+necessarily first posted. `publishedAtMeaning` preserves that distinction.
+
+Defaults `companyGroup: "none"` and `rolePreset: "all"` preserve existing manual
+watchlist workflows. The displayed starter input chooses AI/Data explicitly.
+
+## Output you can use
+
+The dataset has one row per normalized, filtered job actually saved:
 
 | Fields | Meaning |
 | --- | --- |
 | `id`, `jobKey`, `source`, `boardKey` | Source ID and stable provider/board/job identity |
-| `company`, `companySource` | Employer **board slug**, not an invented legal/display name |
+| `company`, `companySource` | Employer board slug and its source |
+| `companyDisplayName`, `companyDisplayNameSource` | Curated display label when known, otherwise the board slug, with provenance |
 | `title`, `locations`, `department`, `team` | Published job fields when available |
 | `workplaceType`, `workplaceTypeSource` | Explicit remote/hybrid/onsite value or unknown |
 | `employmentType`, `descriptionText` | Published employment label and cleaned job content |
 | `jobUrl`, `applyUrl` | Source job/application links when exposed |
 | `publishedAt`, `publishedAtMeaning`, `updatedAt` | Publication and modification dates kept distinct |
-| `salary` | Source compensation only; null when not exposed |
-| `fieldSources`, `requestUrl`, `observedAt` | JSON field mapping, API source and observation time |
+| `salary` | Source compensation only; null when absent |
+| `fieldSources`, `requestUrl`, `observedAt` | JSON field mapping, source API and observation time |
 
-The Output tab also links spreadsheet-safe CSV, `SUMMARY`, `DIAGNOSTICS`,
-`KNOWN_JOB_IDS` and the complete `OUTPUT` JSON. Diagnostics include per-board
-fetched/filtered/invalid/saved counts, errors and completion flags. Signals in
-the summary are calculated **only from saved rows**, not total employer hiring.
+The Output tab also links spreadsheet-safe CSV, `newsletter.md`, `SUMMARY`,
+`DIAGNOSTICS`, `KNOWN_JOB_IDS`, `EMPLOYER_CATALOG` and complete `OUTPUT` JSON.
+The Markdown draft includes titles, employer labels, locations, workplace labels
+and source application/job links. Review it before republishing.
 
-## Repeat runs without false closure claims
+Diagnostics report per-board fetched/filtered/invalid/saved counts, errors and
+completion flags. Summary signals use **only saved rows**, not total employer
+hiring. A board name in the catalog does not guarantee its feed is currently
+available or contains matching roles.
 
-Copy `KNOWN_JOB_IDS` to the next run's `knownJobIds`. Only previous keys and jobs
-actually saved in this run enter this rolling union. Filtered, failed or unpaid
-jobs are not marked seen. Up to 10,000 keys are retained; the oldest are dropped
-and `knownJobIdsTruncated` is true if the rolling union grows larger. An evicted
-key can appear again in a future run. This is a bounded seen-list, not a durable
-unlimited database or an automatic scheduler.
+## Repeat without paying for known keys
 
-An absent job is **never** labeled closed. A capped, filtered, rate-limited or
-failed board is not a complete employer snapshot. Even a fully read feed is an
-observation at one time; this Actor does not infer openings, closures or growth
-from missing records.
+Copy the **KNOWN_JOB_IDS** JSON array into the next run's `knownJobIds`. Only
+previous keys and jobs actually saved in this run enter this rolling union.
+Filtered, failed or unpaid jobs are not marked seen. Keys are checked before
+saving and billing.
+
+Up to 10,000 keys are retained; the oldest are dropped and
+`knownJobIdsTruncated` is true if the union grows larger. An evicted key can
+appear again. This is a bounded seen-list, not an unlimited history database.
+Scheduling the same input does not automatically copy state: your workflow must
+save the new array and supply it in the following run.
+
+An unknown key means **not in your supplied seen-list**, not newly published.
+Previously saved jobs with changed descriptions remain skipped by key. An absent
+job is never labeled closed. Capped, filtered, rate-limited or failed boards
+cannot establish a full employer snapshot or hiring growth.
+
+The standalone CLI can load a previous export directly:
+
+```powershell
+hiringsignal run --input examples/ai-data-newsletter.json --previous-ids output/known_job_ids.json --output output-next
+```
+
+The combined input seen-list must still fit the 10,000-key bound.
 
 ## Pricing and limits
 
-The Actor fee is **$0.0015 per saved job ($1.50 per 1,000)**; check the Pricing
-tab for current terms. In pay-per-event mode the event is `job-saved`,
-once per successful, normalized, filtered dataset row. Errors, empty boards,
-filtered jobs and previously known jobs do not generate job-saved events. Your
-spending limit bounds persisted results; the final affordable job is retained.
+The configured Actor fee is **$0.0015 per saved job ($1.50 per 1,000)**. The
+Store Pricing tab controls current terms. In pay-per-event mode, `job-saved`
+occurs once per successfully normalized, filtered, saved dataset row. Errors,
+empty boards, filtered jobs and known keys do not generate this event. Check
+displayed platform charges as well as the Actor price; infrastructure may still
+be used when no row is saved. Your spending limit bounds persisted results.
 
-Limits are 30 boards, 1,000 saved jobs per run, 1,000 saved jobs per board,
-8 MiB decoded JSON per response, 80 HTTP attempts per run, 20 Lever pages per
-board, 5,000 processed source records per board and 12,000 description characters
-per saved job. A transient request is retried at most once, with paced requests
-and a bounded retry wait. No JavaScript, private ATS data or applications are read.
+Limits: 30 selected boards, 1,000 saved jobs per run, 1,000 per board, 8 MiB
+decoded JSON per response, 80 HTTP attempts per run, 20 Lever pages per board,
+5,000 processed source records per board and 12,000 description characters per
+saved job. Transient requests receive at most one retry with paced requests and
+a bounded retry wait. No JavaScript pages or private ATS endpoints are read.
 
-Source fields may be absent or change. Salary is not estimated. Currencies and
-compensation intervals remain as published. Review source links and coverage
-diagnostics before using the data in a hiring or research decision.
+Source fields may be absent or change. Salary is not estimated; currencies and
+compensation intervals remain as published. Check source links and diagnostics
+before making hiring or research decisions. Respect source content terms when
+republishing jobs.
 
 ## Support
 

@@ -71,6 +71,8 @@ class BillingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(actor.writes["SUMMARY"]["chargedJobs"], 1)
         self.assertTrue(actor.writes["SUMMARY"]["budgetLimitReached"])
         self.assertEqual(actor.events, [BILLABLE_EVENT])
+        self.assertIn("1 saved matching jobs", actor.writes["newsletter.md"])
+        self.assertEqual(len(actor.writes["EMPLOYER_CATALOG"]["employers"]), 14)
 
     async def test_zero_budget_does_not_fetch_or_charge(self):
         actor = FakeActor(FakeManager(remaining=0))
@@ -80,6 +82,7 @@ class BillingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(actor.events, [])
         self.assertEqual(actor.writes["KNOWN_JOB_IDS"], ["lever:acme:old"])
         self.assertEqual(actor.writes["RESULTS"], [])
+        self.assertIn("0 saved matching jobs", actor.writes["newsletter.md"])
 
     async def test_non_ppe_has_no_explicit_billing(self):
         actor = FakeActor(FakeManager(ppe=False))

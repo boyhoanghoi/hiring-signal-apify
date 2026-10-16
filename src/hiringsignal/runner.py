@@ -8,6 +8,7 @@ from typing import Awaitable, Callable
 from .client import FeedClient, FeedError
 from .config import RunConfig
 from .providers import filter_reason, normalize_job, request_url
+from .catalog import search_context
 
 
 MAX_PAGES_PER_BOARD = 20
@@ -127,6 +128,7 @@ async def scrape_boards(config: RunConfig, on_result: Callable[[dict], Awaitable
         request_count = client.requests
     complete = all(board["coverageComplete"] for board in boards)
     return {"results": rows, "diagnostics": boards, "summary": {
+        "search": search_context(config),
         "inputBoards": len(config.boards), "successfulBoards": sum(board["status"] == "success" for board in boards),
         "failedBoards": sum(board["status"] == "failed" for board in boards),
         "skippedBoards": sum(board["status"] == "skipped" for board in boards),

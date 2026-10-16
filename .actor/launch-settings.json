@@ -1,13 +1,13 @@
 {
-  "title": "Greenhouse, Lever & Ashby Jobs Scraper | HiringSignal",
-  "description": "Read public employer job feeds with filters for titles, locations and explicit remote roles. Skip known job keys and export jobs with source evidence and board coverage.",
-  "seoDescription": "Collect and filter Greenhouse, Lever and Ashby jobs. Stable job keys, source provenance, JSON/CSV and repeat-run deduplication for job board workflows.",
+  "title": "AI & Tech Jobs Finder | Greenhouse, Lever & Ashby",
+  "description": "Choose curated AI, developer tools or fintech employers and role presets. Export filtered jobs to CSV and newsletter Markdown; skip previously saved jobs. Source-backed Greenhouse, Lever and Ashby feeds.",
+  "seoDescription": "Find AI, data and tech jobs across curated employer boards. Filter Greenhouse, Lever and Ashby feeds; export CSV and a newsletter shortlist with repeat-run deduplication.",
   "categories": [
     "JOBS",
     "LEAD_GENERATION",
     "DEVELOPER_TOOLS"
   ],
-  "seoTitle": "Greenhouse, Lever & Ashby Jobs Scraper | HiringSignal",
+  "seoTitle": "AI & Tech Jobs Finder | Greenhouse, Lever & Ashby",
   "defaultRunOptions": {
     "build": "latest",
     "timeoutSecs": 300,

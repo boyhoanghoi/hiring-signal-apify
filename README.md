@@ -1,29 +1,78 @@
-# HiringSignal
+# HiringSignal: AI & Data Jobs Finder
 
 <img src="assets/brand/icon-512.png" width="72" height="72" alt="HiringSignal icon">
 
-[Run on Apify Store](https://apify.com/reliable_quatrain/greenhouse-lever-ashby-jobs-hiring-signal) · [Vietnamese workflow guide](docs/WORKFLOW_COOKBOOK_VI.md) · [Launch verification](docs/LAUNCH_STATUS.md)
+[Run on Apify Store](https://apify.com/reliable_quatrain/greenhouse-lever-ashby-jobs-hiring-signal) · [First run](docs/FIRST_RUN.md) · [Hướng dẫn tiếng Việt](docs/FIRST_RUN_VI.md)
 
-Public Greenhouse, Lever and Ashby employer jobs, normalized into one dataset.
-The standalone Python CLI and Apify Actor share the same validation, mappings,
-filters and export code. See the [Store product guide](.actor/README.md) for exact
-field meanings, limits and coverage caveats.
+![HiringSignal: selected employer feeds to a reviewable jobs shortlist](assets/launch/jobs-finder.png)
+
+Build a jobs shortlist for an AI/Data newsletter or niche job board without first
+finding every employer's ATS address. Select a curated company group and role
+preset, then export matching public Greenhouse, Lever and Ashby postings as CSV,
+JSON and a reviewable Markdown newsletter draft.
+
+```json
+{
+  "companyGroup": "ai",
+  "rolePreset": "data-ai",
+  "maxJobs": 6,
+  "maxJobsPerBoard": 2
+}
+```
+
+The curated watchlist is a bounded starting point, not a search of all employers
+or every job on the internet. Results follow selected board/provider order, not
+a newest-first ranking. Use `boards` to add your own supported employer feeds;
+explicit boards run first and the chosen group is added without duplicates.
+
+## Run locally
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[actor]"
-.\.venv\Scripts\python.exe -m hiringsignal run --input examples/input.json --output output
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+.\.venv\Scripts\python.exe -m hiringsignal catalog
+.\.venv\Scripts\python.exe -m hiringsignal run --input examples/ai-data-newsletter.json --output output
 ```
 
-Local runs do not publish the Actor or charge Apify events. Output includes
-`results.json`, `results.csv`, `summary.json`, `diagnostics.json` and
-`known_job_ids.json`. JSON preserves observations; CSV escapes formula-like
-cells. Pass saved `jobKey` values back as `knownJobIds` to skip prior results.
+`catalog` prints the curated employers, board keys and exact role-preset title
+terms; [catalog notes](docs/CATALOG.md) explain its scope. Local output includes `results.json`, spreadsheet-safe `results.csv`,
+`newsletter.md`, `summary.json`, `diagnostics.json` and `known_job_ids.json`.
+The newsletter contains only saved rows and should be reviewed before publishing.
 
-The configured Actor fee is $0.0015 per saved job ($1.50 per 1,000). The Store
-Pricing tab controls the current price. Usage is not evidence of earned revenue.
+For a later run, load the previous saved-job keys:
 
-Deployment and official API references are in [docs/README.md](docs/README.md).
-The source is MIT licensed; employer job content remains subject to its owners'
-terms and applicable use requirements.
+```powershell
+.\.venv\Scripts\python.exe -m hiringsignal run --input examples/ai-data-newsletter.json --previous-ids output/known_job_ids.json --output output-next
+```
+
+The CLI merges these keys with any input `knownJobIds`, subject to the same
+10,000-key input bound. It skips known keys before saving or billing. Cloud runs
+require copying the `KNOWN_JOB_IDS` array into the next input; a schedule alone
+does not transfer state. See the [first-run guide](docs/FIRST_RUN.md).
+
+## Know what you are getting
+
+- `companyGroup`: `none`, `ai`, `developer-tools`, `fintech` or `all`.
+- `rolePreset`: `all`, `data-ai`, `engineering`, `product-design` or `sales-marketing`.
+- Optional title, location, explicit remote and publication-date filters combine
+  with the preset. Source dates and remote eligibility have limits; see the
+  [Store product guide](.actor/README.md).
+- An unseen saved key is not proof of a newly published job. Missing records
+  never become closure or hiring-growth claims.
+- Board caps make small runs deliberately partial. Inspect `DIAGNOSTICS` before
+  using job counts for research or comparing employers.
+
+The configured Apify Actor fee is **$0.0015 per saved matching job ($1.50 per
+1,000)**. Six saved jobs correspond to $0.009 in Actor events; the Store Pricing
+tab and displayed platform charges control the actual cost. Local runs do not
+charge Apify events. Free/owner trials are not evidence of customer revenue.
+
+[Vietnamese workflow cookbook](docs/WORKFLOW_COOKBOOK_VI.md) ·
+[Development and deployment](docs/README.md) ·
+[Launch verification](docs/LAUNCH_STATUS.md) ·
+[Launch post drafts](docs/LAUNCH_POSTS.md) ·
+[Kế hoạch tìm người dùng](docs/ACQUISITION_PLAN_VI.md)
+
+The source is MIT licensed. Employer job content remains subject to its owners'
+terms and applicable use requirements. Employer names are watchlist labels, not
+customers, partnerships or endorsements.

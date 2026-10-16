@@ -1,17 +1,28 @@
 # Dùng HiringSignal vào công việc thật
 
+[Bắt đầu với nhóm AI/Data, sáu tin và bản nháp newsletter](FIRST_RUN_VI.md)
+hoặc xem [hướng dẫn tiếng Anh](FIRST_RUN.md). Ví dụ mới dùng nhóm công ty có
+sẵn; bạn vẫn có thể tự nhập watchlist như quy trình dưới đây.
+
 ## Gom tin cho website việc làm hoặc newsletter
 
-Khách phù hợp là người đã có danh sách công ty muốn theo dõi. Actor đọc board
-của các công ty đó; không tự tìm mọi công ty hoặc mọi việc làm trên internet.
+Khách phù hợp là người làm newsletter, website việc làm hoặc theo dõi tuyển
+dụng ở một nhóm công ty. Chọn `companyGroup` và `rolePreset` có sẵn, hoặc tự
+nhập board của các công ty muốn theo dõi. Actor không tìm mọi công ty hoặc mọi
+việc làm trên internet.
 
-1. Mở Actor, nhập các board trong `boards` và đặt giới hạn nhỏ trước.
+1. Mở Actor, chọn nhóm công ty hoặc nhập `boards`, đặt giới hạn nhỏ trước.
 2. Dùng `includeTitleKeywords` cho các từ như `engineer`, `data`; thêm
    `excludeTitleKeywords` nếu cần loại các vị trí không phù hợp.
 3. Chạy rồi xem dataset: tiêu đề, địa điểm, mô tả, link việc làm và nguồn.
 4. Kiểm tra `DIAGNOSTICS` trước khi dùng số tin để so sánh các công ty: board bị
    lỗi hoặc chạm giới hạn không đại diện cho toàn bộ nhu cầu tuyển dụng.
 5. Xuất CSV cho bảng tính, hoặc lấy dataset JSON qua API để cập nhật website.
+
+`newsletter.md` là bản nháp Markdown từ các tin thực sự đã lưu để bạn kiểm tra
+và chỉnh sửa. Actor không tự đăng newsletter; thứ tự theo nguồn, không phải
+tin mới nhất trước. Dùng `hiringsignal catalog` trên CLI hoặc xem
+`EMPLOYER_CATALOG` trong Output để kiểm tra danh sách chọn sẵn và từ khóa preset.
 
 `remoteOnly` chỉ giữ tin có trường remote rõ ràng từ nguồn. Tin ghi remote
 không đồng nghĩa được làm việc từ mọi quốc gia. Khi lọc `publishedAfter`, tin

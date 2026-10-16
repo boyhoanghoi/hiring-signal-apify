@@ -7,6 +7,8 @@ import re
 from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
+from .catalog import GROUP_NAMES, ROLE_TERMS, group_boards
+
 
 @dataclass(frozen=True)
 class Board:
@@ -87,6 +89,8 @@ def _words(value: Any, name: str) -> tuple[str, ...]:
 @dataclass(frozen=True)
 class RunConfig:
     boards: tuple[Board, ...]
+    company_group: str = "none"
+    role_preset: str = "all"
     max_jobs: int = 20
     max_jobs_per_board: int = 8
     include_title_keywords: tuple[str, ...] = ()
@@ -102,14 +106,23 @@ class RunConfig:
     def from_dict(cls, data: Any) -> "RunConfig":
         if not isinstance(data, dict):
             raise ValueError("Input must be a JSON object.")
-        known = {"boards", "maxJobs", "maxJobsPerBoard", "includeTitleKeywords", "excludeTitleKeywords", "locationKeywords", "remoteOnly", "publishedAfter", "timeoutSeconds", "minDelaySeconds", "knownJobIds"}
+        known = {"boards", "companyGroup", "rolePreset", "maxJobs", "maxJobsPerBoard", "includeTitleKeywords", "excludeTitleKeywords", "locationKeywords", "remoteOnly", "publishedAfter", "timeoutSeconds", "minDelaySeconds", "knownJobIds"}
         unknown = [str(key) for key in data if key not in known and not str(key).startswith("__")]
         if unknown:
             raise ValueError("Unknown input field(s): " + ", ".join(sorted(unknown)))
-        values = data.get("boards")
-        if not isinstance(values, list) or not 1 <= len(values) <= 30:
-            raise ValueError("boards must contain between 1 and 30 public employer boards.")
-        boards = tuple(dict.fromkeys(parse_board(value) for value in values))
+        group = data.get("companyGroup", "none")
+        role = data.get("rolePreset", "all")
+        if not isinstance(group, str) or group not in GROUP_NAMES:
+            raise ValueError("companyGroup must be none, ai, developer-tools, fintech or all.")
+        if not isinstance(role, str) or role not in ROLE_TERMS:
+            raise ValueError("rolePreset must be all, data-ai, engineering, product-design or sales-marketing.")
+        values = data.get("boards", [])
+        if not isinstance(values, list) or len(values) > 30:
+            raise ValueError("boards must be a list of at most 30 public employer boards.")
+        # Explicit boards come first; selecting a group adds its curated watchlist.
+        boards = tuple(dict.fromkeys(parse_board(value) for value in [*values, *group_boards(group)]))
+        if not 1 <= len(boards) <= 30:
+            raise ValueError("Select a companyGroup or supply boards; the combined selection must contain 1 to 30 unique boards.")
         remote = data.get("remoteOnly", False)
         if not isinstance(remote, bool):
             raise ValueError("remoteOnly must be true or false.")
@@ -123,7 +136,7 @@ class RunConfig:
         prior = data.get("knownJobIds", [])
         if not isinstance(prior, list) or len(prior) > 10000 or any(not isinstance(item, str) or not item.strip() or len(item) > 400 for item in prior):
             raise ValueError("knownJobIds must be at most 10,000 stable jobKey strings, each at most 400 characters.")
-        return cls(boards=boards,
+        return cls(boards=boards, company_group=group, role_preset=role,
             max_jobs=_int(data.get("maxJobs", 20), "maxJobs", 1, 1000),
             max_jobs_per_board=_int(data.get("maxJobsPerBoard", 8), "maxJobsPerBoard", 1, 1000),
             include_title_keywords=_words(data.get("includeTitleKeywords", []), "includeTitleKeywords"),

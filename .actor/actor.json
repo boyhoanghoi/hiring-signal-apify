@@ -1,9 +1,9 @@
 {
   "actorSpecification": 1,
   "name": "greenhouse-lever-ashby-jobs-hiring-signal",
-  "title": "Greenhouse, Lever & Ashby Jobs Scraper | HiringSignal",
-  "description": "Normalize public employer jobs across Greenhouse, Lever and Ashby. Filter titles, locations, remote roles and dates; skip known jobs; export source-backed JSON and CSV with coverage diagnostics.",
-  "version": "0.1",
+  "title": "AI & Tech Jobs Finder | Greenhouse, Lever & Ashby",
+  "description": "Choose curated AI, developer tools or fintech employers and role presets. Export filtered jobs to CSV and newsletter Markdown; skip previously saved jobs. Source-backed Greenhouse, Lever and Ashby feeds.",
+  "version": "0.2",
   "buildTag": "latest",
   "dockerfile": "../Dockerfile",
   "dockerContextDir": "..",

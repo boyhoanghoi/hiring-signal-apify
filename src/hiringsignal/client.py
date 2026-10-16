@@ -49,7 +49,7 @@ class FeedClient:
     async def __aenter__(self):
         self.session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=self.config.timeout_seconds),
-            headers={"User-Agent": "HiringSignal/0.1 (public ATS job feed reader)", "Accept": "application/json"},
+            headers={"User-Agent": "HiringSignal/0.2 (public ATS job feed reader)", "Accept": "application/json"},
             connector=aiohttp.TCPConnector(limit=3), trust_env=False,
         )
         return self

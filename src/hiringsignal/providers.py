@@ -10,6 +10,7 @@ from urllib.parse import urlsplit, urlunsplit
 from bs4 import BeautifulSoup
 
 from .config import Board, RunConfig, iso_datetime
+from .catalog import employer_for, role_matches
 
 
 MAX_DESCRIPTION = 12000
@@ -99,6 +100,10 @@ def normalize_job(board: Board, raw: Any, url: str, observed_at: str | None = No
         "jobUrl": job_url, "applyUrl": None, "publishedAt": None, "publishedAtMeaning": None,
         "updatedAt": None, "salary": None, "fieldSources": sources, "requestUrl": url,
         "observedAt": observed_at or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}
+    employer = employer_for(board.key)
+    row["companyDisplayName"] = employer["name"] if employer else board.slug
+    row["companyDisplayNameSource"] = "curated-employer-catalog" if employer else "board-slug"
+    sources["companyDisplayName"] = f"catalog:{board.key}" if employer else "input.boardSlug"
     if board.provider == "greenhouse":
         location = raw.get("location", {})
         if isinstance(location, dict) and text(location.get("name")):
@@ -191,6 +196,8 @@ def normalize_job(board: Board, raw: Any, url: str, observed_at: str | None = No
 
 def filter_reason(row: dict, config: RunConfig) -> str | None:
     title = row["title"].casefold()
+    if not role_matches(row["title"], config.role_preset):
+        return "role_preset_not_matched"
     if config.include_title_keywords and not any(word in title for word in config.include_title_keywords):
         return "title_not_included"
     if any(word in title for word in config.exclude_title_keywords):

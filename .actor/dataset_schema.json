@@ -12,6 +12,8 @@
       "boardKey": {"type": "string", "title": "Provider and board"},
       "company": {"type": "string", "title": "Company board slug", "description": "The supplied employer board slug; not a guessed display name."},
       "companySource": {"type": "string", "title": "Company identity source"},
+      "companyDisplayName": {"type": "string", "title": "Employer display name", "description": "Editorial catalog name for recognized boards; board slug otherwise. Not a verified legal identity."},
+      "companyDisplayNameSource": {"type": "string", "title": "Display-name provenance"},
       "title": {"type": "string", "title": "Published job title"},
       "locations": {"type": "array", "title": "Published locations", "items": {"type": "string"}},
       "department": {"type": "string", "title": "Department"},
@@ -36,7 +38,7 @@
   "views": {
     "jobs": {
       "title": "Jobs",
-      "transformation": {"fields": ["title", "company", "source", "locations", "workplaceType", "department", "employmentType", "publishedAt", "jobUrl"]},
+      "transformation": {"fields": ["title", "companyDisplayName", "source", "locations", "workplaceType", "department", "employmentType", "publishedAt", "jobUrl"]},
       "display": {"component": "table", "properties": {"jobUrl": {"format": "link"}, "locations": {"format": "array"}, "publishedAt": {"format": "date"}}}
     },
     "provenance": {

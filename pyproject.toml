@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hiringsignal-apify"
-version = "0.1.0"
-description = "Public Greenhouse, Lever and Ashby job feed normalization with filtering and coverage diagnostics."
+version = "0.2.0"
+description = "Curated employer Jobs Finder for AI/Data newsletters and job boards, with public ATS feeds, filtered exports and repeat-run deduplication."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"

@@ -5,17 +5,17 @@
   "isPublic": true,
   "url": "https://apify.com/reliable_quatrain/greenhouse-lever-ashby-jobs-hiring-signal",
   "build": {
-    "buildId": "12ABV9NASLbyM7UCQ",
-    "finishedAt": "2026-10-16T04:06:28.240Z",
-    "buildNumberInt": 200001,
-    "buildNumber": "0.2.1"
+    "buildId": "dtYBVUZGuucG79BNh",
+    "finishedAt": "2026-10-16T11:34:21.063Z",
+    "buildNumberInt": 300001,
+    "buildNumber": "0.3.1"
   },
   "smokeRunIds": [
-    "r1sLWBIM3vUDAWwWi",
-    "zFYEcQgQpsChXmak1"
+    "IdkxRscuI7UbdMpwJ",
+    "sa97cpPa3Kz7jZgDA"
   ],
-  "sourceCommit": "da79a811edb204ac27e5112b03638b4696e1d7c7",
-  "unitTestsPassed": 32,
+  "sourceCommit": "8c1fbd4d34c72d39085f69ebab16178696591fe6",
+  "unitTestsPassed": 42,
   "publicHttpStatus": 200,
   "anonymousPublicApiVerified": true,
   "billingEvent": "job-saved",
@@ -28,32 +28,83 @@
   "customerRevenueVerified": false,
   "previousRelease": {
     "build": {
-      "buildId": "T72cZc6bICBXkA1sD",
-      "finishedAt": "2026-10-15T17:02:15.741Z",
-      "buildNumberInt": 100001,
-      "buildNumber": "0.1.1"
+      "buildId": "12ABV9NASLbyM7UCQ",
+      "finishedAt": "2026-10-16T04:06:28.240Z",
+      "buildNumberInt": 200001,
+      "buildNumber": "0.2.1"
     },
+    "sourceCommit": "da79a811edb204ac27e5112b03638b4696e1d7c7",
     "smokeRunIds": [
-      "6fbnLvEU9xgDEu26A",
-      "r1SzqsTWEOhdCIhpb"
-    ]
+      "r1sLWBIM3vUDAWwWi",
+      "zFYEcQgQpsChXmak1"
+    ],
+    "cloudChecks": [
+      {
+        "runId": "r1sLWBIM3vUDAWwWi",
+        "savedJobs": 5,
+        "chargedEvents": {
+          "job-saved": 5
+        },
+        "usageTotalUsd": 0.000654895523723629
+      },
+      {
+        "runId": "zFYEcQgQpsChXmak1",
+        "savedJobs": 5,
+        "chargedEvents": {
+          "job-saved": 5
+        },
+        "usageTotalUsd": 0.0006694522769335244
+      }
+    ],
+    "unitTestsPassed": 32
   },
   "cloudChecks": [
     {
-      "runId": "r1sLWBIM3vUDAWwWi",
-      "savedJobs": 5,
-      "chargedEvents": {
-        "job-saved": 5
+      "id": "IdkxRscuI7UbdMpwJ",
+      "status": "SUCCEEDED",
+      "rows": 3,
+      "events": {
+        "job-saved": 3
       },
-      "usageTotalUsd": 0.000654895523723629
+      "providers": [
+        "ashby",
+        "greenhouse",
+        "lever"
+      ],
+      "failedBoards": 0,
+      "employmentTypes": [
+        "unknown",
+        "unknown",
+        "full-time"
+      ],
+      "rssItems": 3,
+      "jsonFeedItems": 3,
+      "mimeTypesVerified": true,
+      "usageTotalUsd": 0.0007170008822745748
     },
     {
-      "runId": "zFYEcQgQpsChXmak1",
-      "savedJobs": 5,
-      "chargedEvents": {
-        "job-saved": 5
+      "id": "sa97cpPa3Kz7jZgDA",
+      "status": "SUCCEEDED",
+      "rows": 1,
+      "events": {
+        "job-saved": 1
       },
-      "usageTotalUsd": 0.0006694522769335244
+      "providers": [
+        "ashby"
+      ],
+      "failedBoards": 0,
+      "employmentTypes": [
+        "full-time"
+      ],
+      "rssItems": 1,
+      "jsonFeedItems": 1,
+      "mimeTypesVerified": true,
+      "usageTotalUsd": 0.0004285010489821435
     }
-  ]
+  ],
+  "packageVersion": "0.3.0",
+  "rssCloudVerified": true,
+  "jsonFeedCloudVerified": true,
+  "feedMimeTypesVerified": true,
+  "employmentFilterCloudVerified": true
 }

@@ -175,7 +175,8 @@ class RunnerTests(unittest.IsolatedAsyncioTestCase):
         FakeClient.responses[request_url(Board("greenhouse", "acme"))] = FeedError("timeout", "Timed out")
         FakeClient.responses[request_url(Board("lever", "acme"))] = [None, {"id": "bad", "categories": []}]
         report = await scrape_boards(self.config(), client_factory=FakeClient)
-        self.assertEqual(report["summary"]["failedBoards"], 1)
+        self.assertEqual(report["summary"]["failedBoards"], 2)
+        self.assertEqual(report["diagnostics"][1]["errorCode"], "all_records_invalid")
         self.assertGreaterEqual(report["summary"]["invalidJobs"], 2)
         self.assertEqual(report["summary"]["savedJobs"], 1)
         self.assertFalse(report["summary"]["coverageComplete"])

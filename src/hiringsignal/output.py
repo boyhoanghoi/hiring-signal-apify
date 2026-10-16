@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 from urllib.parse import quote, urlsplit
 
+from .feeds import json_feed, rss_feed
+
 
 def spreadsheet_cell(value) -> str:
     if value is None:
@@ -20,7 +22,7 @@ def spreadsheet_cell(value) -> str:
 def results_csv(rows: list[dict]) -> str:
     stream = io.StringIO(newline="")
     fields = ["id", "jobKey", "source", "board", "boardKey", "company", "companySource", "companyDisplayName", "companyDisplayNameSource", "title", "locations", "department", "team",
-              "workplaceType", "workplaceTypeSource", "employmentType", "descriptionText", "descriptionTruncated", "jobUrl",
+              "workplaceType", "workplaceTypeSource", "employmentType", "employmentTypeNormalized", "descriptionText", "descriptionTruncated", "jobUrl",
               "applyUrl", "publishedAt", "publishedAtMeaning", "updatedAt", "salary", "fieldSources", "requestUrl", "observedAt"]
     writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\r\n")
     writer.writeheader()
@@ -70,6 +72,8 @@ def export_results(report: dict, directory: str | Path) -> None:
         (directory / f"{name}.json").write_text(json.dumps(report[name], indent=2, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
     (directory / "results.csv").write_text("\ufeff" + results_csv(report["results"]), encoding="utf-8", newline="")
     (directory / "newsletter.md").write_text(newsletter_markdown(report["results"], report["summary"]), encoding="utf-8")
+    (directory / "jobs.rss").write_text(rss_feed(report["results"], report["summary"]), encoding="utf-8")
+    (directory / "jobs.feed.json").write_text(json.dumps(json_feed(report["results"], report["summary"]), indent=2, ensure_ascii=False, allow_nan=False) + "\n", encoding="utf-8")
     if "knownJobIds" in report:
         (directory / "known_job_ids.json").write_text(json.dumps(report["knownJobIds"], indent=2) + "\n", encoding="utf-8")
 

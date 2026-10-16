@@ -9,7 +9,7 @@
 Build a jobs shortlist for an AI/Data newsletter or niche job board without first
 finding every employer's ATS address. Select a curated company group and role
 preset, then export matching public Greenhouse, Lever and Ashby postings as CSV,
-JSON and a reviewable Markdown newsletter draft.
+JSON, RSS 2.0, JSON Feed 1.1 and a reviewable Markdown newsletter draft.
 
 ```json
 {
@@ -38,6 +38,11 @@ python -m venv .venv
 terms; [catalog notes](docs/CATALOG.md) explain its scope. Local output includes `results.json`, spreadsheet-safe `results.csv`,
 `newsletter.md`, `summary.json`, `diagnostics.json` and `known_job_ids.json`.
 The newsletter contains only saved rows and should be reviewed before publishing.
+`jobs.rss` and `jobs.feed.json` contain the same saved jobs for feed readers and
+job-board integrations. Each file is a static export of one run. Source dates
+remain source dates; missing publication dates are omitted rather than replaced
+with the run time. See the [feed integration guide](docs/FEED_INTEGRATION.md)
+or [huong dan tieng Viet](docs/FEED_INTEGRATION_VI.md).
 
 For a later run, load the previous saved-job keys:
 
@@ -57,10 +62,16 @@ does not transfer state. See the [first-run guide](docs/FIRST_RUN.md).
 - Optional title, location, explicit remote and publication-date filters combine
   with the preset. Source dates and remote eligibility have limits; see the
   [Store product guide](.actor/README.md).
+- `employmentTypes` optionally selects explicit source employment labels mapped
+  to full-time, part-time, contract, temporary, internship, freelance,
+  apprenticeship or unknown. Missing/ambiguous labels are never guessed from
+  titles or descriptions. Filtering happens before saving and billing.
 - An unseen saved key is not proof of a newly published job. Missing records
   never become closure or hiring-growth claims.
 - Board caps make small runs deliberately partial. Inspect `DIAGNOSTICS` before
   using job counts for research or comparing employers.
+- If every attempted source fails, the run fails with diagnostics and no saved-job
+  events. A successful empty feed or zero filter matches remains a valid result.
 
 The configured Apify Actor fee is **$0.0015 per saved matching job ($1.50 per
 1,000)**. Six saved jobs correspond to $0.009 in Actor events; the Store Pricing

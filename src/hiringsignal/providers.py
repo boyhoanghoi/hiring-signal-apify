@@ -17,6 +17,19 @@ MAX_DESCRIPTION = 12000
 API_HOSTS = frozenset({"boards-api.greenhouse.io", "api.lever.co", "api.eu.lever.co", "api.ashbyhq.com"})
 
 
+def normalized_employment_type(value: str) -> str:
+    """Map only unambiguous, explicit source labels; never inspect job prose."""
+    key = re.sub(r"[\s_-]+", "", value.casefold())
+    return {
+        "fulltime": "full-time", "parttime": "part-time",
+        "contract": "contract", "contractor": "contract",
+        "temporary": "temporary", "temp": "temporary",
+        "internship": "internship", "intern": "internship",
+        "freelance": "freelance", "freelancer": "freelance",
+        "apprenticeship": "apprenticeship", "apprentice": "apprenticeship",
+    }.get(key, "unknown")
+
+
 def request_url(board: Board, offset: int = 0) -> str:
     if board.provider == "greenhouse":
         return f"https://boards-api.greenhouse.io/v1/boards/{board.slug}/jobs?content=true"
@@ -187,6 +200,9 @@ def normalize_job(board: Board, raw: Any, url: str, observed_at: str | None = No
     if row["workplaceTypeSource"]:
         sources["workplaceType"] = row["workplaceTypeSource"]
     row["descriptionText"], row["descriptionTruncated"] = description(desc)
+    row["employmentTypeNormalized"] = normalized_employment_type(row["employmentType"])
+    if "employmentType" in sources:
+        sources["employmentTypeNormalized"] = sources["employmentType"] + ":exact-label-map"
     if board.provider != "greenhouse":
         row["applyUrl"] = safe_public_link(raw.get("applyUrl"))
         if row["applyUrl"]:
@@ -206,6 +222,8 @@ def filter_reason(row: dict, config: RunConfig) -> str | None:
         return "location_not_included"
     if config.remote_only and row["workplaceType"] != "remote":
         return "not_explicitly_remote"
+    if config.employment_types and row.get("employmentTypeNormalized", "unknown") not in config.employment_types:
+        return "employment_type_not_included"
     if config.published_after:
         parsed = iso_datetime(row.get("publishedAt"))
         if parsed is None:

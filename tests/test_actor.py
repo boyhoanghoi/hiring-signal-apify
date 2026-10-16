@@ -1,4 +1,5 @@
 import sys
+import json
 from types import SimpleNamespace
 import unittest
 from unittest.mock import AsyncMock, patch
@@ -72,6 +73,7 @@ class BillingTests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(actor.writes["SUMMARY"]["budgetLimitReached"])
         self.assertEqual(actor.events, [BILLABLE_EVENT])
         self.assertIn("1 saved matching jobs", actor.writes["newsletter.md"])
+        self.assertEqual([item["id"] for item in json.loads(actor.writes["jobs.feed.json"])["items"]], [actor.dataset[0]["jobKey"]])
         self.assertEqual(len(actor.writes["EMPLOYER_CATALOG"]["employers"]), 14)
 
     async def test_zero_budget_does_not_fetch_or_charge(self):
@@ -83,6 +85,8 @@ class BillingTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(actor.writes["KNOWN_JOB_IDS"], ["lever:acme:old"])
         self.assertEqual(actor.writes["RESULTS"], [])
         self.assertIn("0 saved matching jobs", actor.writes["newsletter.md"])
+        self.assertEqual(json.loads(actor.writes["jobs.feed.json"])["items"], [])
+        self.assertFalse(actor.writes["SUMMARY"]["sourceFailureFatal"])
 
     async def test_non_ppe_has_no_explicit_billing(self):
         actor = FakeActor(FakeManager(ppe=False))
@@ -103,6 +107,27 @@ class BillingTests(unittest.IsolatedAsyncioTestCase):
             scrape.assert_not_awaited()
             self.assertEqual(actor.exit_code, 1)
             self.assertEqual(actor.events, [])
+
+    async def test_all_failed_sources_preserve_diagnostics_and_known_ids_but_fail_the_run(self):
+        actor = FakeActor(FakeManager())
+        async def failed(config, callback):
+            return {"results": [], "diagnostics": [{"board": "lever:acme", "status": "failed", "errorCode": "timeout"}],
+                    "summary": {"savedJobs": 0, "failedBoards": 1, "successfulBoards": 0}}
+        await self.run_fake(actor, failed)
+        self.assertEqual(actor.exit_code, 1)
+        self.assertEqual(actor.events, [])
+        self.assertTrue(actor.writes["SUMMARY"]["sourceFailureFatal"])
+        self.assertEqual(actor.writes["KNOWN_JOB_IDS"], ["lever:acme:old"])
+        self.assertEqual(actor.writes["DIAGNOSTICS"][0]["errorCode"], "timeout")
+        self.assertEqual(json.loads(actor.writes["jobs.feed.json"])["items"], [])
+
+    async def test_empty_successful_source_does_not_fail_when_another_source_is_unavailable(self):
+        actor = FakeActor(FakeManager())
+        async def empty(config, callback):
+            return {"results": [], "diagnostics": [], "summary": {"failedBoards": 1, "successfulBoards": 1}}
+        await self.run_fake(actor, empty)
+        self.assertEqual(actor.exit_code, 0)
+        self.assertFalse(actor.writes["SUMMARY"]["sourceFailureFatal"])
 
 
 if __name__ == "__main__":

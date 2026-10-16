@@ -22,9 +22,16 @@ def saved_signals(rows: list[dict]) -> dict:
         "jobsBySource": dict(Counter(row["source"] for row in rows)),
         "jobsByDepartment": dict(Counter(row["department"] or "unknown" for row in rows)),
         "jobsByWorkplaceType": dict(Counter(row["workplaceType"] for row in rows)),
+        "jobsByEmploymentType": dict(Counter(row.get("employmentTypeNormalized", "unknown") for row in rows)),
         "jobsWithPublishedDate": sum(row["publishedAt"] is not None for row in rows),
         "jobsWithSalary": sum(row["salary"] is not None for row in rows),
     }
+
+
+def source_failure_is_fatal(report: dict) -> bool:
+    """Empty successful feeds/filters are valid; no usable source is a failure."""
+    summary = report["summary"]
+    return not report["results"] and summary.get("failedBoards", 0) > 0 and summary.get("successfulBoards", 0) == 0
 
 
 async def scrape_boards(config: RunConfig, on_result: Callable[[dict], Awaitable[bool]] | None = None, *, client_factory=FeedClient) -> dict:
@@ -123,6 +130,9 @@ async def scrape_boards(config: RunConfig, on_result: Callable[[dict], Awaitable
                               "stopReason": "provider_error"})
                 if exc.status == "request_limit":
                     stop_all = True
+            if state["status"] == "success" and state["invalidJobs"] > 0 and state["normalizedJobs"] == 0:
+                state.update({"status": "failed", "error": "No returned listed job could be normalized. Source schema may have changed.",
+                    "errorCode": "all_records_invalid", "stopReason": "provider_schema_error", "feedComplete": False})
             state["requests"] = client.requests - before_requests
             state["coverageComplete"] = state["feedComplete"] and state["invalidJobs"] == 0 and state["status"] == "success"
         request_count = client.requests

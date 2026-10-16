@@ -4,7 +4,7 @@
 
 Turn selected public employer job boards into a shortlist for your AI/Data
 newsletter or niche job board. Choose a curated company group and role preset,
-then download matching jobs as CSV, JSON and a Markdown newsletter draft.
+then download matching jobs as CSV, JSON, RSS, JSON Feed and a Markdown newsletter draft.
 Greenhouse, Lever and Ashby feeds share one normalized schema with source links.
 
 [Step-by-step first run](https://github.com/boyhoanghoi/hiring-signal-apify/blob/main/docs/FIRST_RUN.md) ·
@@ -81,6 +81,15 @@ use case-insensitive substring matching. Terms within each list are OR; differen
 filter lists and the role preset combine with AND. Exclusion takes priority.
 All filters apply **before saving and billing**.
 
+`employmentTypes` is an optional OR list of `full-time`, `part-time`, `contract`,
+`temporary`, `internship`, `freelance`, `apprenticeship` and `unknown`. An empty
+list adds no restriction. `employmentTypeNormalized` maps only unambiguous
+explicit provider labels such as Lever `categories.commitment` and Ashby
+`employmentType`; the original label remains in `employmentType` and provenance
+in `fieldSources`. Missing/ambiguous labels stay `unknown`. Greenhouse jobs
+usually have no explicit employment type and are excluded when you select only
+known types. The title and description never determine employment type.
+
 `remoteOnly` requires an explicit provider remote field, excluding hybrid and
 unknown jobs. A remote-looking title or location is not enough. Greenhouse's
 list feed generally has no explicit workplace field, so its jobs usually do not
@@ -107,7 +116,7 @@ The dataset has one row per normalized, filtered job actually saved:
 | `companyDisplayName`, `companyDisplayNameSource` | Curated display label when known, otherwise the board slug, with provenance |
 | `title`, `locations`, `department`, `team` | Published job fields when available |
 | `workplaceType`, `workplaceTypeSource` | Explicit remote/hybrid/onsite value or unknown |
-| `employmentType`, `descriptionText` | Published employment label and cleaned job content |
+| `employmentType`, `employmentTypeNormalized`, `descriptionText` | Original employment label, exact normalized label or unknown, and cleaned job content |
 | `jobUrl`, `applyUrl` | Source job/application links when exposed |
 | `publishedAt`, `publishedAtMeaning`, `updatedAt` | Publication and modification dates kept distinct |
 | `salary` | Source compensation only; null when absent |
@@ -118,10 +127,26 @@ The Output tab also links spreadsheet-safe CSV, `newsletter.md`, `SUMMARY`,
 The Markdown draft includes titles, employer labels, locations, workplace labels
 and source application/job links. Review it before republishing.
 
+**`jobs.rss` (RSS 2.0) and `jobs.feed.json` (JSON Feed 1.1)** export only the
+saved rows, in provider order, with stable `jobKey` item IDs and source job
+links. Missing source publication dates are omitted; observation time never
+becomes a publication date. Ashby's last-publication meaning is labeled in the
+content. Feed descriptions are shortened to 2,000 source description characters;
+open the posting or use dataset JSON for more content. RSS source markup is
+escaped and JSON Feed uses plain text. These are static per-run exports, not
+an automatically updated hosted subscription or an unlimited job archive. See
+the [integration guide](https://github.com/boyhoanghoi/hiring-signal-apify/blob/main/docs/FEED_INTEGRATION.md).
+
 Diagnostics report per-board fetched/filtered/invalid/saved counts, errors and
 completion flags. Summary signals use **only saved rows**, not total employer
 hiring. A board name in the catalog does not guarantee its feed is currently
 available or contains matching roles.
+
+If every attempted employer feed fails, the run reports failure with
+`sourceFailureFatal: true` after writing diagnostics, empty exports and unchanged
+known IDs. A nonempty feed in which no listed job can be normalized is a source
+schema failure. Successful empty feeds and zero filter matches are valid results;
+mixed failures and successes remain partial and are visible in diagnostics.
 
 ## Repeat without paying for known keys
 

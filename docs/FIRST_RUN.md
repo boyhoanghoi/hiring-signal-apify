@@ -42,6 +42,9 @@ matches change, so zero or fewer than six rows can be a valid result.
 - **EMPLOYER_CATALOG:** inspect the curated employer labels, board keys and role
   terms used by this version.
 - **KNOWN_JOB_IDS:** retain this JSON array for the next run.
+- **jobs.rss / jobs.feed.json:** saved-only feeds for your own job-board or
+  feed-reader workflow. They are static artifacts of this run. See the
+  [integration guide](FEED_INTEGRATION.md) before using incremental exports.
 
 The draft is in provider order, not newest-first. A job not previously saved can
 be an older posting. Remote status requires explicit source metadata and does

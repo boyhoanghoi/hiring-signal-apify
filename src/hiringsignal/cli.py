@@ -5,7 +5,7 @@ from pathlib import Path
 
 from .config import RunConfig
 from .output import export_results, rolling_known_ids
-from .runner import scrape_boards
+from .runner import scrape_boards, source_failure_is_fatal
 from .catalog import catalog_document
 
 
@@ -31,6 +31,7 @@ def main() -> int:
             data["knownJobIds"] = list(dict.fromkeys([*current.known_job_ids, *previous.known_job_ids]))
         config = RunConfig.from_dict(data)
         report = asyncio.run(scrape_boards(config))
+        report["summary"]["sourceFailureFatal"] = source_failure_is_fatal(report)
         report["knownJobIds"], report["summary"]["knownJobIdsTruncated"] = rolling_known_ids(config.known_job_ids, report["results"])
         export_results(report, args.output)
     except (OSError, ValueError, RecursionError) as exc:
@@ -38,4 +39,4 @@ def main() -> int:
     except KeyboardInterrupt:
         parser.exit(130, "HiringSignal: interrupted.\n")
     print(f"Saved {len(report['results'])} jobs to {args.output.resolve()}; {report['summary']['failedBoards']} failed boards.")
-    return 1 if report["summary"]["failedBoards"] and not report["results"] else 0
+    return 1 if report["summary"]["sourceFailureFatal"] else 0

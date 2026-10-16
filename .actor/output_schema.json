@@ -5,6 +5,8 @@
     "jobs": {"type": "string", "title": "Saved matching jobs", "template": "{{links.apiDefaultDatasetUrl}}/items"},
     "csv": {"type": "string", "title": "Spreadsheet-safe CSV", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/results.csv"},
     "newsletter": {"type": "string", "title": "Newsletter jobs shortlist (Markdown)", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/newsletter.md"},
+    "rss": {"type": "string", "title": "RSS 2.0 jobs feed (this run)", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/jobs.rss"},
+    "jsonFeed": {"type": "string", "title": "JSON Feed 1.1 jobs feed (this run)", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/jobs.feed.json"},
     "employerCatalog": {"type": "string", "title": "Curated employers and role preset terms", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/EMPLOYER_CATALOG"},
     "summary": {"type": "string", "title": "Saved-job signals and run summary", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/SUMMARY"},
     "diagnostics": {"type": "string", "title": "Per-board coverage and failures", "template": "{{links.apiDefaultKeyValueStoreUrl}}/records/DIAGNOSTICS"},

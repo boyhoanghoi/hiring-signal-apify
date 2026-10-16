@@ -2,10 +2,12 @@
 
 import asyncio
 from dataclasses import replace
+import json
 
 from .config import RunConfig
 from .output import newsletter_markdown, results_csv, rolling_known_ids
-from .runner import scrape_boards, saved_signals
+from .feeds import json_feed, rss_feed
+from .runner import scrape_boards, saved_signals, source_failure_is_fatal
 from .catalog import catalog_document, search_context
 
 
@@ -65,11 +67,13 @@ async def run_actor() -> None:
         known, known_truncated = rolling_known_ids(config.known_job_ids, saved)
         report["knownJobIds"] = known
         summary = report["summary"]
+        fatal_source_failure = source_failure_is_fatal(report)
         summary.update({"savedJobs": len(saved), "signals": saved_signals(saved), "countsScope": "saved-results-only",
             "search": search_context(config),
             "budgetLimitReached": budget_reached, "billingEvent": BILLABLE_EVENT if ppe else None,
             "chargedJobs": manager.get_charged_event_count(BILLABLE_EVENT) if ppe else 0,
-            "knownJobIdsTruncated": known_truncated, "closureInferenceSupported": False})
+            "knownJobIdsTruncated": known_truncated, "closureInferenceSupported": False,
+            "sourceFailureFatal": fatal_source_failure})
         await Actor.set_value("RESULTS", saved)
         await Actor.set_value("SUMMARY", summary)
         await Actor.set_value("DIAGNOSTICS", report["diagnostics"])
@@ -77,8 +81,15 @@ async def run_actor() -> None:
         await Actor.set_value("EMPLOYER_CATALOG", catalog_document())
         await Actor.set_value("results.csv", results_csv(saved), content_type="text/csv; charset=utf-8")
         await Actor.set_value("newsletter.md", newsletter_markdown(saved, summary), content_type="text/markdown; charset=utf-8")
+        await Actor.set_value("jobs.rss", rss_feed(saved, summary), content_type="application/rss+xml; charset=utf-8")
+        await Actor.set_value("jobs.feed.json", json.dumps(json_feed(saved, summary), ensure_ascii=False, allow_nan=False), content_type="application/feed+json; charset=utf-8")
         await Actor.set_value("OUTPUT", report)
-        Actor.status_message = f"Saved {len(saved)} matching jobs. " + ("Spending limit reached." if budget_reached else "See diagnostics for board coverage.")
+        if fatal_source_failure:
+            Actor.exit_code = 1
+            Actor.status_message = "All attempted employer feeds failed; no jobs were saved. Inspect DIAGNOSTICS."
+            Actor.log.error(Actor.status_message)
+        else:
+            Actor.status_message = f"Saved {len(saved)} matching jobs. " + ("Spending limit reached." if budget_reached else "See diagnostics for board coverage.")
 
 
 def main():

@@ -10,6 +10,9 @@ from urllib.parse import parse_qs, urlsplit
 from .catalog import GROUP_NAMES, ROLE_TERMS, group_boards
 
 
+EMPLOYMENT_TYPES = ("full-time", "part-time", "contract", "temporary", "internship", "freelance", "apprenticeship", "unknown")
+
+
 @dataclass(frozen=True)
 class Board:
     provider: str
@@ -96,6 +99,7 @@ class RunConfig:
     include_title_keywords: tuple[str, ...] = ()
     exclude_title_keywords: tuple[str, ...] = ()
     location_keywords: tuple[str, ...] = ()
+    employment_types: tuple[str, ...] = ()
     remote_only: bool = False
     published_after: datetime | None = None
     timeout_seconds: int = 20
@@ -106,7 +110,7 @@ class RunConfig:
     def from_dict(cls, data: Any) -> "RunConfig":
         if not isinstance(data, dict):
             raise ValueError("Input must be a JSON object.")
-        known = {"boards", "companyGroup", "rolePreset", "maxJobs", "maxJobsPerBoard", "includeTitleKeywords", "excludeTitleKeywords", "locationKeywords", "remoteOnly", "publishedAfter", "timeoutSeconds", "minDelaySeconds", "knownJobIds"}
+        known = {"boards", "companyGroup", "rolePreset", "maxJobs", "maxJobsPerBoard", "includeTitleKeywords", "excludeTitleKeywords", "locationKeywords", "employmentTypes", "remoteOnly", "publishedAfter", "timeoutSeconds", "minDelaySeconds", "knownJobIds"}
         unknown = [str(key) for key in data if key not in known and not str(key).startswith("__")]
         if unknown:
             raise ValueError("Unknown input field(s): " + ", ".join(sorted(unknown)))
@@ -126,6 +130,9 @@ class RunConfig:
         remote = data.get("remoteOnly", False)
         if not isinstance(remote, bool):
             raise ValueError("remoteOnly must be true or false.")
+        employment = data.get("employmentTypes", [])
+        if not isinstance(employment, list) or len(employment) > len(EMPLOYMENT_TYPES) or any(not isinstance(item, str) or item not in EMPLOYMENT_TYPES for item in employment):
+            raise ValueError("employmentTypes must contain only: " + ", ".join(EMPLOYMENT_TYPES) + ".")
         after_raw = data.get("publishedAfter")
         after = iso_datetime(after_raw) if after_raw not in (None, "") else None
         if after_raw not in (None, "") and after is None:
@@ -141,6 +148,7 @@ class RunConfig:
             max_jobs_per_board=_int(data.get("maxJobsPerBoard", 8), "maxJobsPerBoard", 1, 1000),
             include_title_keywords=_words(data.get("includeTitleKeywords", []), "includeTitleKeywords"),
             exclude_title_keywords=_words(data.get("excludeTitleKeywords", []), "excludeTitleKeywords"),
-            location_keywords=_words(data.get("locationKeywords", []), "locationKeywords"), remote_only=remote,
+            location_keywords=_words(data.get("locationKeywords", []), "locationKeywords"),
+            employment_types=tuple(dict.fromkeys(employment)), remote_only=remote,
             published_after=after, timeout_seconds=_int(data.get("timeoutSeconds", 20), "timeoutSeconds", 5, 45),
             min_delay_seconds=float(delay), known_job_ids=tuple(dict.fromkeys(item.strip() for item in prior)))

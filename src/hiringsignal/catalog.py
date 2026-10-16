@@ -71,6 +71,7 @@ def search_context(config) -> dict:
     return {
         "companyGroup": config.company_group,
         "rolePreset": config.role_preset,
+        "employmentTypes": list(config.employment_types),
         "roleTitleTerms": list(ROLE_TERMS[config.role_preset]),
         "catalogVersion": CATALOG_VERSION,
         "resolvedBoards": [board.key for board in config.boards],

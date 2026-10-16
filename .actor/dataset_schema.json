@@ -21,6 +21,7 @@
       "workplaceType": {"type": "string", "enum": ["remote", "hybrid", "onsite", "unknown"], "title": "Explicit workplace type"},
       "workplaceTypeSource": {"type": ["string", "null"], "title": "Workplace source JSON field"},
       "employmentType": {"type": "string", "title": "Employment type as published"},
+      "employmentTypeNormalized": {"type": "string", "title": "Normalized explicit employment type", "enum": ["full-time", "part-time", "contract", "temporary", "internship", "freelance", "apprenticeship", "unknown"], "description": "Exact mapping of explicit employmentType/commitment labels only. Missing and ambiguous source labels stay unknown."},
       "descriptionText": {"type": "string", "title": "Plain-text job description", "description": "HTML removed, at most 12,000 characters."},
       "descriptionTruncated": {"type": "boolean", "title": "Description shortened"},
       "jobUrl": {"type": "string", "title": "Public job URL"},
@@ -38,7 +39,7 @@
   "views": {
     "jobs": {
       "title": "Jobs",
-      "transformation": {"fields": ["title", "companyDisplayName", "source", "locations", "workplaceType", "department", "employmentType", "publishedAt", "jobUrl"]},
+      "transformation": {"fields": ["title", "companyDisplayName", "source", "locations", "workplaceType", "department", "employmentType", "employmentTypeNormalized", "publishedAt", "jobUrl"]},
       "display": {"component": "table", "properties": {"jobUrl": {"format": "link"}, "locations": {"format": "array"}, "publishedAt": {"format": "date"}}}
     },
     "provenance": {

@@ -21,7 +21,12 @@ Transport allows the four official API hosts and refuses every redirect.
 
 Boards run sequentially, retaining bounded JSON and normalized results in memory.
 Each API request has a timeout, at most one transient retry, an 8 MiB decoded-body
-limit and paced provider access. Provider errors become board diagnostics. The
+limit and paced provider access. Provider errors become board diagnostics. A
+nonempty feed whose listed jobs are all malformed is a schema failure, not an
+empty successful feed. If every attempted board fails and no rows are saved,
+both the CLI and Actor report failure after writing diagnostics and exports.
+A successful source with zero matches remains valid; mixed coverage is partial.
+The
 run saves at most 1,000 descriptions of at most 12,000 characters, fitting a
 512 MB default deployment; malformed records are counted and skipped.
 
@@ -57,6 +62,21 @@ explicit charge, under the SDK's charging lock. The Actor preflights the combine
 event/dataset budget, reduces its job cap and honors the final affordable row.
 Failures, invalid rows, filters, duplicates and known jobs do not reach this call.
 Only successfully saved rows enter CSV, JSON and next-run known keys.
+The same saved-only rule applies to newsletter, RSS and JSON Feed exports.
+
+## Feed exports and employment filters
+
+`jobs.rss` implements RSS 2.0 and `jobs.feed.json` implements JSON Feed 1.1,
+using stable job keys and source dates without manufactured publication dates.
+Feeds are static per-run artifacts with descriptions shortened to 2,000 source
+description characters. Consumers handle their own stable hosting, state and
+archives. See [feed integration](FEED_INTEGRATION.md) and the
+[Vietnamese guide](FEED_INTEGRATION_VI.md).
+
+`employmentTypeNormalized` maps only exact unambiguous explicit source labels.
+`employmentTypes` filters those labels before the save callback and billing.
+Unknown/missing labels stay unknown and are not inferred from prose. Raw labels
+and field provenance are retained in dataset JSON/CSV.
 
 The SDK integration follows the official
 [pay-per-event guide](https://docs.apify.com/sdk/python/docs/concepts/pay-per-event).

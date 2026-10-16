@@ -1,0 +1,8 @@
+{
+  "companyGroup": "ai",
+  "rolePreset": "data-ai",
+  "employmentTypes": ["full-time"],
+  "maxJobs": 6,
+  "maxJobsPerBoard": 2,
+  "knownJobIds": []
+}

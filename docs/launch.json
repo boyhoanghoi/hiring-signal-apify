@@ -5,18 +5,55 @@
   "isPublic": true,
   "url": "https://apify.com/reliable_quatrain/greenhouse-lever-ashby-jobs-hiring-signal",
   "build": {
-    "buildId": "T72cZc6bICBXkA1sD",
-    "finishedAt": "2026-10-15T17:02:15.741Z",
-    "buildNumberInt": 100001,
-    "buildNumber": "0.1.1"
+    "buildId": "12ABV9NASLbyM7UCQ",
+    "finishedAt": "2026-10-16T04:06:28.240Z",
+    "buildNumberInt": 200001,
+    "buildNumber": "0.2.1"
   },
   "smokeRunIds": [
-    "6fbnLvEU9xgDEu26A",
-    "r1SzqsTWEOhdCIhpb"
+    "r1sLWBIM3vUDAWwWi",
+    "zFYEcQgQpsChXmak1"
   ],
-  "sourceCommit": "1f1b7d83b2a031e0398c577178b7601b6e38f739",
-  "unitTestsPassed": 22,
+  "sourceCommit": "da79a811edb204ac27e5112b03638b4696e1d7c7",
+  "unitTestsPassed": 32,
   "publicHttpStatus": 200,
   "anonymousPublicApiVerified": true,
-  "billingEvent": "job-saved"
+  "billingEvent": "job-saved",
+  "title": "AI & Tech Jobs Finder | Greenhouse, Lever & Ashby",
+  "billingEventPriceUsd": 0.0015,
+  "catalogEmployers": 14,
+  "catalogVerifiedAt": "2026-10-16",
+  "newsletterCloudVerified": true,
+  "documentationImageInStoreHtml": true,
+  "customerRevenueVerified": false,
+  "previousRelease": {
+    "build": {
+      "buildId": "T72cZc6bICBXkA1sD",
+      "finishedAt": "2026-10-15T17:02:15.741Z",
+      "buildNumberInt": 100001,
+      "buildNumber": "0.1.1"
+    },
+    "smokeRunIds": [
+      "6fbnLvEU9xgDEu26A",
+      "r1SzqsTWEOhdCIhpb"
+    ]
+  },
+  "cloudChecks": [
+    {
+      "runId": "r1sLWBIM3vUDAWwWi",
+      "savedJobs": 5,
+      "chargedEvents": {
+        "job-saved": 5
+      },
+      "usageTotalUsd": 0.000654895523723629
+    },
+    {
+      "runId": "zFYEcQgQpsChXmak1",
+      "savedJobs": 5,
+      "chargedEvents": {
+        "job-saved": 5
+      },
+      "usageTotalUsd": 0.0006694522769335244
+    }
+  ]
 }
